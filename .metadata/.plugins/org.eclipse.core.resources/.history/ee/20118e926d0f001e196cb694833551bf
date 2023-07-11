@@ -1,0 +1,65 @@
+package in.ashokit.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.UniqueConstraint;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import in.ashokit.entity.EligibilityDetails;
+import in.ashokit.repo.EligibilityDetailsRepo;
+import in.ashokit.request.SearchRequest;
+import in.ashokit.response.SearchResponse;
+
+@Service
+public class ReportServiceImpl implements ReportService {
+	
+	@Autowired
+	private EligibilityDetailsRepo eligRepo;
+
+	@Override
+	public List<String> getUniquePlanName() {
+		return eligRepo.findPlanNames();
+	}
+
+	@Override
+	public List<String> getUniquePlanStatuses() {
+		return eligRepo.findPlanStatuses();
+	}
+
+	@Override
+	public List<SearchResponse> search(SearchRequest request) {
+		
+		List<SearchResponse> response = new ArrayList<>();
+		
+		String planName = request.getPlanName();
+		
+		String planStatus = request.getPlanStatus();
+		
+		
+		List<EligibilityDetails> entities = eligRepo.findAll();
+		
+		for(EligibilityDetails entity : entities) {
+			SearchResponse sr = new SearchResponse();
+			BeanUtils.copyProperties(entity, sr);
+			response.add(sr);
+		}
+		
+		return response;
+	}
+
+	@Override
+	public HttpServletResponse generateExcel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void generatePdf(HttpServletResponse response) {
+	}
+
+}
